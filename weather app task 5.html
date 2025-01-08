@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+            text-align: center;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px 0;
+            font-size: 24px;
+        }
+
+        .weather-container {
+            margin: 50px auto;
+            padding: 20px;
+            max-width: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .weather-info {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Weather App
+</header>
+
+<div class="weather-container">
+    <input type="text" id="locationInput" placeholder="Enter location">
+    <button id="fetchWeather">Get Weather</button>
+    <div class="weather-info" id="weatherInfo"></div>
+</div>
+
+<script>
+    const weatherInfo = document.getElementById('weatherInfo');
+    const fetchWeatherButton = document.getElementById('fetchWeather');
+    const locationInput = document.getElementById('locationInput');
+
+    async function fetchWeather(location) {
+        const apiKey = 'your_api_key_here'; // Replace with your API key
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Location not found');
+            }
+            const data = await response.json();
+            displayWeather(data);
+        } catch (error) {
+            weatherInfo.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        }
+    }
+
+    function displayWeather(data) {
+        const { name, main, weather } = data;
+        weatherInfo.innerHTML = `
+            <h2>${name}</h2>
+            <p><strong>Temperature:</strong> ${main.temp}°C</p>
+            <p><strong>Condition:</strong> ${weather[0].description}</p>
+            <p><strong>Humidity:</strong> ${main.humidity}%</p>
+        `;
+    }
+
+    fetchWeatherButton.addEventListener('click', () => {
+        const location = locationInput.value.trim();
+        if (location) {
+            fetchWeather(location);
+        } else {
+            weatherInfo.innerHTML = '<p style="color: red;">Please enter a location</p>';
+        }
+    });
+</script>
+
+</body>
+</html>
